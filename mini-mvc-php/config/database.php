@@ -1,5 +1,4 @@
 <?php
-
 /**
  * CONEXÃO COM O BANCO
  *
@@ -52,19 +51,63 @@ try {
 
 // Roda em toda visita. IF NOT EXISTS evita erro se a tabela já existe.
 $pdo->exec(
-    'CREATE TABLE IF NOT EXISTS livros (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+    'CREATE TABLE IF NOT EXISTS usuarios (
+        idUsuario INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        email TEXT NOT NULL,
+        telefone TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS livros (
+        idLivro INTEGER PRIMARY KEY AUTOINCREMENT,
         titulo TEXT NOT NULL,
-        descricao TEXT NOT NULL
-    )'
+        autor TEXT NOT NULL,
+        categoria TEXT NOT NULL,
+        status TEXT DEFAULT "DISPONIVEL",
+        localizacao TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS emprestimos (
+        idEmprestimo INTEGER PRIMARY KEY AUTOINCREMENT,
+        idUsuario INTEGER NOT NULL,
+        idLivro INTEGER NOT NULL,
+        dataEmprestimo TEXT NOT NULL,
+        dataDevolucao TEXT NOT NULL,
+        dataDevolucaoReal TEXT,
+        status TEXT DEFAULT "ATIVO",
+        FOREIGN KEY (idUsuario) REFERENCES usuarios(idUsuario),
+        FOREIGN KEY (idLivro) REFERENCES livros(idLivro)
+    );'
 );
 
 /*
  * Versão da mesma tabela no MySQL:
  *
- * CREATE TABLE IF NOT EXISTS tarefas (
- *     id INT AUTO_INCREMENT PRIMARY KEY,
- *     titulo VARCHAR(120) NOT NULL,
- *     descricao TEXT NOT NULL
+ * CREATE TABLE IF NOT EXISTS usuarios (
+ *     idUsuario INT AUTO_INCREMENT PRIMARY KEY,
+ *     nome VARCHAR(120) NOT NULL,
+ *     email VARCHAR(120) NOT NULL,
+ *     telefone VARCHAR(30) NOT NULL
+ * ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+ *
+ * CREATE TABLE IF NOT EXISTS livros (
+ *     idLivro INT AUTO_INCREMENT PRIMARY KEY,
+ *     titulo VARCHAR(150) NOT NULL,
+ *     autor VARCHAR(120) NOT NULL,
+ *     categoria VARCHAR(80) NOT NULL,
+ *     status VARCHAR(30) DEFAULT 'DISPONIVEL',
+ *     localizacao VARCHAR(50) NOT NULL
+ * ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+ *
+ * CREATE TABLE IF NOT EXISTS emprestimos (
+ *     idEmprestimo INT AUTO_INCREMENT PRIMARY KEY,
+ *     idUsuario INT NOT NULL,
+ *     idLivro INT NOT NULL,
+ *     dataEmprestimo DATE NOT NULL,
+ *     dataDevolucao DATE NOT NULL,
+ *     dataDevolucaoReal DATE,
+ *     status VARCHAR(30) DEFAULT 'ATIVO',
+ *     FOREIGN KEY (idUsuario) REFERENCES usuarios(idUsuario),
+ *     FOREIGN KEY (idLivro) REFERENCES livros(idLivro)
  * ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
  */
