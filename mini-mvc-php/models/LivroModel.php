@@ -22,7 +22,7 @@ class LivroModel
      */
     public function listar()
     {
-        $sql = 'SELECT id, titulo, descricao FROM livros ORDER BY id DESC';
+        $sql = 'SELECT idLivro AS id, titulo, autor, categoria, status, localizacao FROM livros ORDER BY idLivro DESC';
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
@@ -40,14 +40,37 @@ class LivroModel
      *   <input name="titulo">  ->  $_POST['titulo']  ->  :titulo
      *   <textarea name="descricao">  ->  $_POST['descricao']  ->  :descricao
      */
-    public function inserir($titulo, $descricao)
+    public function inserir($titulo, $autor, $categoria, $status, $localizacao)
     {
-        $sql = 'INSERT INTO livros (titulo, descricao) VALUES (:titulo, :descricao)';
+        $sql = 'INSERT INTO livros (titulo, autor, categoria, status, localizacao) VALUES (:titulo, :autor, :categoria, :status, :localizacao)';
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
             ':titulo' => $titulo,
-            ':descricao' => $descricao,
+            ':autor' => $autor,
+            ':categoria' => $categoria,
+            ':status' => $status,
+            ':localizacao' => $localizacao,
         ]);
+    }
+
+    public function buscarPorFiltro($termo)
+    {
+        $sql = 'SELECT idLivro AS id, titulo, autor, categoria, status, localizacao FROM livros WHERE titulo LIKE :termo OR autor LIKE :termo OR categoria LIKE :termo ORDER BY idLivro DESC';
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':termo' => '%' . $termo . '%']);
+
+        return $stmt->fetchAll();
+    }
+
+    public function verificarDisponibilidade($idLivro)
+    {
+        $sql = 'SELECT status, localizacao, categoria FROM livros WHERE idLivro = :id';
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':id' => $idLivro]);
+
+        return $stmt->fetch();
     }
 }
