@@ -45,6 +45,9 @@ try {
 
     // fetch e fetchAll devolvem array associativo: $linha['titulo'].
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
+    // Habilita a verificação de Foreign Keys no SQLite
+    $pdo->exec("PRAGMA foreign_keys = ON;");
 } catch (PDOException $e) {
     exit('Não foi possível conectar ao banco. ' . $e->getMessage());
 }
