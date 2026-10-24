@@ -17,8 +17,8 @@ class LivroModel
     }
 
     /**
-     * Lê todas as tarefas.
-     * prepare + execute + fetchAll é o mesmo trio usado no INSERT.
+     * lê todos os livros
+     * prepare + execute + fetchAll é o mesmo trio usado no INSERT
      */
     public function listar()
     {
@@ -31,14 +31,9 @@ class LivroModel
     }
 
     /**
-     * Grava uma tarefa.
+     * Grava um livro.
      *
-     * :titulo e :descricao são marcadores. O PDO troca cada um pelo
-     * valor correspondente, já escapado para o SQL.
-     *
-     * A cadeia do dado é:
-     *   <input name="titulo">  ->  $_POST['titulo']  ->  :titulo
-     *   <textarea name="descricao">  ->  $_POST['descricao']  ->  :descricao
+     * Os marcadores são trocados pelos valores correspondentes pelo PDO, já escapados.
      */
     public function inserir($titulo, $autor, $categoria, $status, $localizacao)
     {
@@ -54,6 +49,9 @@ class LivroModel
         ]);
     }
 
+    /**
+     * pesquisa livros por título, autor ou categoria
+     */
     public function buscarPorFiltro($termo)
     {
         $sql = 'SELECT idLivro AS id, titulo, autor, categoria, status, localizacao FROM livros WHERE titulo LIKE :termo OR autor LIKE :termo OR categoria LIKE :termo ORDER BY idLivro DESC';
@@ -64,12 +62,19 @@ class LivroModel
         return $stmt->fetchAll();
     }
 
+    /**
+     * verifica disponbilidade e dados de um livro especifico
+     */
     public function verificarDisponibilidade($idLivro)
     {
         $sql = 'SELECT status, localizacao, categoria FROM livros WHERE idLivro = :id';
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':id' => $idLivro]);
+
+        return $stmt->fetch();
+    }
+}
 
         return $stmt->fetch();
     }
